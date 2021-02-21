@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import List from "./composition/List";
 import "./App.css";
-import STORE from "./store";
+import STORE from "./STORE";
 
 const newRandomCard = () => {
   const id = Math.random().toString(36).substring(2, 4);
@@ -22,16 +22,16 @@ function omit(obj, keyToOmit) {
 }
 
 class App extends Component {
-  static defaultProps = {
+  state = {
     store: STORE,
   };
-
+      
   handleDeleteCard = (cardId) => {
     const { lists, allCards } = this.state.store;
 
-    const newLists = lists.map((list) => ({
+    const newLists = lists.map(list => ({
       ...list,
-      cardIds: list.cardIds.filter((id) => id !== cardId),
+      cardIds: list.cardIds.filter(id => id !== cardId)
     }));
 
     const newCards = omit(allCards, cardId);
@@ -39,33 +39,35 @@ class App extends Component {
     this.setState({
       store: {
         lists: newLists,
-        allCards: newCards,
-      },
-    });
+        allCards: newCards
+      }
+    })
   };
 
-  handleAddCards = (listId) => {
-    const newCard = newRandomCard();
+  handleAddCard = (listId) => {
+    const newCard = newRandomCard()
 
-    const newLists = this.state.store.lists.map((list) => {
+    const newLists = this.state.store.lists.map(list => {
       if (list.id === listId) {
-        return {
+	return {
           ...list,
-          cardIds: [...list.cardIds, newCard.id],
+          cardIds: [...list.cardIds, newCard.id]
         };
       }
       return list;
-    });
+    })
+
     this.setState({
       store: {
         lists: newLists,
-        AllCards: {
+        allCards: {
           ...this.state.store.allCards,
-          [newCard.id]: newCard,
-        },
-      },
-    });
+          [newCard.id]: newCard
+        }
+      }
+    })
   };
+
 
   render() {
     const { store } = this.state;
@@ -82,7 +84,7 @@ class App extends Component {
               header={list.header}
               cards={list.cardIds.map((id) => store.allCards[id])}
               onClickDelete={this.handleDeleteCard}
-              onClickAdd={this.handleAddCards}
+              onClickAdd={this.handleAddCard}
             />
           ))}
         </div>
